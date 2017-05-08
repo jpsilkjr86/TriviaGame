@@ -1,6 +1,8 @@
 // ********************************************** PSEUDO-CODE **********************************************
 /* 
 
+Pseudo-Code: First Draft
+
 TITLE: Trivia Game (Advanced)
 
 
@@ -18,9 +20,9 @@ $(document).ready(function(){
 var trivia = {
 	timeRemaining: 30, // initial time set to 30 seconds
 	remainingQuestions: [], // empty array of remaining questions, which has deep copies of question objects
-	correctAnswers: 0,
-	incorrectAnswers: 0,
-	unansweredQuestions: 0,
+	numCorrect: 0,
+	numIncorrect: 0,
+	numUnanswered: 0,
 	countDown: function() {
 		// set interval
 
@@ -33,7 +35,7 @@ var trivia = {
 		// insert reset code here
 	},
 	timeOut: function() {
-		// unansweredQuestions++
+		// numUnanswered++
 		// calls clearScreen() to remove DOM elements and their data
 		// display messages 
 		// waitforNext()
@@ -45,9 +47,9 @@ var trivia = {
 		// deep copies questionsAry onto remainingQuestions
 
 		// sets initial values
-		// correctAnswers = 0;
-		// incorrectAnswers = 0;
-		// unansweredQuestions = 0;
+		// numCorrect = 0;
+		// numIncorrect = 0;
+		// numUnanswered = 0;
 
 		// prints startGame button
 
@@ -122,12 +124,25 @@ trivia.startGame(); // calls startGame() to initialize!
 // ******************************************** GLOBAL OBJECTS ********************************************
 
 // FUNCTION CONSTRUCTOR FOR QUESTION OBJECTS
-// function questionObj (arg,arg,arg...) {
-// 		this.arg....
-// }
+function questionObj (qText, answerOne, answerTwo, answerThree, answerFour, correctAnswer) {
+		this.qText = qText;
+		this.answerOne = answerOne;
+		this.answerTwo = answerTwo;
+		this.answerThree = answerThree;
+		this.answerFour = answerFour;
+		this.correctAnswer = correctAnswer;
+}
 
 // QUESTION GLOBAL OBJECTS (push onto questionsAry[] array)
 
+var dinosaursQ = new questionObj(
+	"Which of the following is NOT a period in which the dinosaurs were alive?",
+	"Jurassic Period", "Triassic Period", "Cretaceous Period", "Quaternary Period", 4);
+var constellationQ = new questionObj(
+	"Which of the following is NOT the name of a constellation?",
+	"Andromeda", "Cancer", "Polaris", "Cetus", 3);
+
+console.log(dinosaursQ, constellationQ);
 
 $(document).ready(function(){
 
@@ -135,9 +150,9 @@ $(document).ready(function(){
 var trivia = {
 	timeRemaining: 30, // initial time set to 30 seconds
 	remainingQuestions: [], // empty array of remaining questions, which has deep copies of question objects
-	correctAnswers: 0,
-	incorrectAnswers: 0,
-	unansweredQuestions: 0,
+	numCorrect: 0,
+	numIncorrect: 0,
+	numUnanswered: 0,
 	countDown: function() {
 		// set interval
 
@@ -150,7 +165,7 @@ var trivia = {
 		// insert reset code here
 	},
 	timeOut: function() {
-		// unansweredQuestions++
+		// numUnanswered++
 		// calls clearScreen() to remove DOM elements and their data
 		// display messages 
 		// waitforNext()
@@ -162,9 +177,9 @@ var trivia = {
 		// deep copies questionsAry onto remainingQuestions
 
 		// sets initial values
-		// correctAnswers = 0;
-		// incorrectAnswers = 0;
-		// unansweredQuestions = 0;
+		// numCorrect = 0;
+		// numIncorrect = 0;
+		// numUnanswered = 0;
 
 		// prints startGame button
 
