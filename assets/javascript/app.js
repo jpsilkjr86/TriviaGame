@@ -28,25 +28,59 @@
 
 // ********************************************* GLOBAL OBJECTS *********************************************
 
-var timer = {
-	initialTime: 30;
+// FUNCTION CONSTRUCTOR FOR QUESTION OBJECTS
+// function questionObj (arg,arg,arg...) {
+// 		this.arg....
+// }
+
+// QUESTION GLOBAL OBJECTS (push onto questions[] array)
+
+// Trivia game housed in an object
+var trivia = {
+	initialTime: 30, // initial time set to 30 seconds
+	correctAnswers: 0,
+	incorrectAnswers: 0,
+	unansweredQuestions: 0,
 	countDown: function() {
 		// set interval
 
 		// conditions for calling timer.pause()
 
-			// if interval = 0, pause
+			// if interval = 0, call timeOut()
 
 			// if userwins, pause
-	}
-	reset: function() {
+	},
+	resetTimer: function() {
 		// insert reset code here
-	}
+	},
 	timeOut: function() {
-		// insert timeout code here, changes the number of unanswered questions
-	}
-	pause: function() {
+		// unansweredQuestions++
+	},
+	pauseTimer: function() {
 		// stops the timer where it is at
+	},
+	displayQuestion: function(question) {
+		// takes in question object argument 
+
+		// dipslays question and multiple choice options
+	},
+	isAnswerCorrect: function(question, answer) {
+		// takes in question object argument (has correct answers within it) and user's answer
+
+		// pauses timer right away
+
+		// if correct, return true
+
+		// if incorrect, return false
+	}
+	displayResult: function(answeredRight) {
+		// answeredRight argument is a bool, method prints corresponding messages
+	},
+	displayGameOver: function() {
+		// displays number of correct / incorrect / unsanswered responses
+	},
+	clearScreen: function() {
+		// clears the screen so that the displays can appear to be a new "screen" when they are printed
 	}
 };
 
