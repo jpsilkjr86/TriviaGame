@@ -124,12 +124,10 @@ trivia.startGame(); // calls startGame() to initialize!
 // ******************************************** GLOBAL OBJECTS ********************************************
 
 // FUNCTION CONSTRUCTOR FOR QUESTION OBJECTS
-function questionObj (qText, answerOne, answerTwo, answerThree, answerFour) {
+function questionObj (qText, choices, correctAnswer) {
 		this.qText = qText;
-		this.answerOne = answerOne;
-		this.answerTwo = answerTwo;
-		this.answerThree = answerThree;
-		this.answerFour = answerFour;
+		this.choices = choices;  // array of objects, properties text and veracity
+		this.correctAnswer = correctAnswer;
 }
 
 // QUESTION GLOBAL OBJECTS (push onto questionsAry[] array)
@@ -138,16 +136,18 @@ var questionsAry = [];
 
 var dinosaursQ = new questionObj (
 	'Which of the following is NOT a period in which the dinosaurs were alive?', //.qtext property
-	{text: 'Jurassic Period', veracity: false}, // each answer has two properties. false = wrong answer
+	[{text: 'Jurassic Period', veracity: false}, // each choice has two properties. false = wrong answer
 	{text: 'Triassic Period', veracity: false}, 
 	{text: 'Cretaceous Period', veracity: false}, 
-	{text: 'Quaternary Period', veracity: true}  );
+	{text: 'Quaternary Period', veracity: true}],
+	'Quaternary Period'); //correct answer
 var constellationQ = new questionObj (
 	'Which of the following is NOT the name of a constellation?',
-	{text: 'Andromeda', veracity: false}, 
+	[{text: 'Andromeda', veracity: false}, 
 	{text: 'Cancer', veracity: false}, 
 	{text: 'Polaris', veracity: true}, 
-	{text: 'Cetus', veracity: false}  );
+	{text: 'Cetus', veracity: false}],
+	'Polaris'); //correct answer
 	 
 
 questionsAry.push(dinosaursQ, constellationQ);
@@ -156,11 +156,18 @@ questionsAry.push(dinosaursQ, constellationQ);
 // ******************************************* GLOBAL VARIABLES *******************************************
 // div is added so that we can remove the button
 var startBtn = '<button type="button" class="btn btn-danger" id="start-btn">Click Here to Start the Game!</button>';
-var qdiv = '<div class="questions" id="question-div"></div>'
-		+ '<div class="answers" id="answerone-div"></div>'
-		+ '<div class="answers" id="answertwo-div"></div>'
-		+ '<div class="answers" id="answerthree-div"></div>'
-		+ '<div class="answers" id="answerfour-div"></div>';
+var playAgainBtn = '<button type="button" class="btn btn-success btn-sm" id="playagain-btn">Play Again?</button>';
+
+var scoreboardDiv = '';
+var qDiv = '<div class="questions" id="question-div"></div>'
+		 + '<div class="choices" id="choice-a-div"></div>'
+		 + '<div class="choices" id="choice-b-div"></div>'
+		 + '<div class="choices" id="choice-c-div"></div>'
+		 + '<div class="choices" id="choice-d-div"></div>';
+var answDiv = '<div id="user-guess"></div>'
+			+ '<div id="correct-answer"></div>'
+			+ '<div id="result"></div>';
+var gameOverDiv = '<div class="text-center" id="game-over"></div>';
 
 // ****************************************** MAIN GAME FUNCTION ******************************************
 $(document).ready(function(){
@@ -208,6 +215,9 @@ var trivia = {
 		trivia.numIncorrect = 0;
 		trivia.numUnanswered = 0;
 
+		// prints initial scoreboard
+		trivia.updateScoreboard();
+
 		// prints startGame button
 		trivia.addButton(startBtn);
 
@@ -227,86 +237,129 @@ var trivia = {
 		// pulls a random question from remainingQuestions array, saves as new question
 		var randInd = Math.floor(Math.random() * trivia.remainingQuestions.length);
 		var thisQ = trivia.remainingQuestions[randInd];
+		var corAnsw = thisQ.correctAnswer; // stores string of correct answer
 
-		// appends all empty divs related to questions and answers
-		$('#question-space').append(qdiv);
+		// appends all empty divs related to questions and choices
+		$('#question-space').append(qDiv);
 
-		// prints Q's and A's on DOM and assigns data to DOM elements simultaneously
-		$('#question-div').html(thisQ.qText).data(thisQ.qText);
-		$('#answerone-div').html(thisQ.answerOne.text).data(thisQ.answerOne);
-		$('#answertwo-div').html(thisQ.answerTwo.text).data(thisQ.answerTwo);
-		$('#answerthree-div').html(thisQ.answerThree.text).data(thisQ.answerThree);
-		$('#answerfour-div').html(thisQ.answerFour.text).data(thisQ.answerFour);
+		// prints Q and choices on DOM and assigns data to DOM elements simultaneously
+		$('#question-div').html(thisQ.qText).data(thisQ.qText); // stores question here
+		$('#choice-a-div').html(thisQ.choices[0].text).data(thisQ.choices[0]); // stores choices here
+		$('#choice-b-div').html(thisQ.choices[1].text).data(thisQ.choices[1]);
+		$('#choice-c-div').html(thisQ.choices[2].text).data(thisQ.choices[2]);
+		$('#choice-d-div').html(thisQ.choices[3].text).data(thisQ.choices[3]);
 
 		// deletes question from remaining questions
 		trivia.remainingQuestions.splice(randInd, 1);
 
 		console.log('after splice:', trivia.remainingQuestions);
-		console.log('after splice:', thisQ);
 
-		trivia.getAnswer();
+		trivia.getAnswer(corAnsw); // sends string argument with correct answer
 	},
-	getAnswer: function() {
+	getAnswer: function(corAnsw) {
 		
 		var userGuess;
 
 		// selector for getting response from user click on the DOM (data stored on DOM already)
-		$('.answers').click(function(){
+		$('.choices').click(function(){
 			userGuess = $(this).data();
-			console.log('veracity:', userGuess.veracity);
 
 			// calls pauseTimer()
 
-			trivia.displayResult(userGuess);
+			trivia.displayResult(userGuess, corAnsw);
 		});
 			
 
 			
 	},
-	displayResult: function(userGuess) {
+	displayResult: function(userGuess, corAnsw) {
 		// stores DOM element animation / gif if there is any
-		console.log('You guessed ' + userGuess.text + '. That is ' + userGuess.veracity + '.');
-		// calls clearScreen(), removes DOM elements from the board and their data
 
-		// prints message "Good job!" or "Answer is incorrect" depending on "result"
+		// calls clearScreen(), removes DOM elements from the board and their data
+		trivia.clearScreen();
+
+		// populates screen with empty div's
+		$('#result-space').append(answDiv);
+
+		// display results according to information stored in this method's arguments
+		$('#user-guess').append('You guessed: ' + userGuess.text + '.');
+		$('#correct-answer').append('Correct answer: ' + corAnsw + '.');
+
+		// conditional checking if their answer was correct
+		if (userGuess.veracity) {
+			$('#result').append('<strong>You are correct! Good job!</strong>');
+			trivia.numCorrect++;
+		}
+		else {
+			$('#result').append('<strong>Sorry, you are incorrect.</strong>');
+			trivia.numIncorrect++;
+		}
+
+		// updates scoreboard
+		trivia.updateScoreboard();
 
 		// plays gif or animation
 
 		// call waitForNext()
+		trivia.waitForNext();
 	},
 	displayGameOver: function() {
 		// calls clearScreen()
-
+		trivia.clearScreen();
 		// displays number of correct / incorrect / unsanswered responses
+
+
+		$('#result-space').append(gameOverDiv);
+		$('#game-over').append("<strong>Game over.</strong>");
+
+		// prints startGame button
+		trivia.addButton(playAgainBtn);
+
+		// listens for button click to start the game
+		$('#playagain-btn').click(function(){
+			// calls displayQuestion()
+			trivia.startGame();
+		});
+
 
 		// prints continue button "Click Here to Continue"
 
 			// listens for button click to call startGame()
 	},
 	clearScreen: function() {
-		console.log('clearScreen() called');
 		// clears the screen so that the displays can appear to be a new "screen" when they are printed
 
 		// removes buttons and its event listener
 		$('#start-btn').remove();
+		$('#playagain-btn').remove();
 
-		// removes questions, answers and data
+		// removes questions, choices and data
 		$('#question-div').remove();
-		$('#answerone-div').remove();
-		$('#answertwo-div').remove();
-		$('#answerthree-div').remove();
-		$('#answerfour-div').remove();
+		$('#choice-a-div').remove();
+		$('#choice-b-div').remove();
+		$('#choice-c-div').remove();
+		$('#choice-d-div').remove();
+		$('#user-guess').remove();
+		$('#correct-answer').remove();
+		$('#result').remove();
+		$('#game-over').remove();
 	},
 	waitForNext: function() {
-		// setInterval timer for 5 seconds before moving to the next screen
-
-		// if remainingQuestions.length === 0
-			// call displayGameOver()
-		// else
-			// call displayQuestion()
+		// setTimeout timer for 5 seconds before moving to the next screen
+		setTimeout(function(){
+			if (trivia.remainingQuestions.length === 0) 
+				{trivia.displayGameOver();}
+			else
+				{trivia.displayQuestion();}
+		}, 3500);
 	},
 	addButton: function(btn) {
 		$('#button-space').append(btn);
+	},
+	updateScoreboard: function() {
+		$('#scoreboard').html('Correct: ' + trivia.numCorrect + 
+			'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Incorrect: ' + trivia.numIncorrect + 
+			'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Unsanswered: ' + trivia.numUnanswered);
 	}
 };
 
@@ -326,4 +379,3 @@ trivia.startGame(); // calls startGame() to initialize!
 
 
 }); // end of Document Ready
-
