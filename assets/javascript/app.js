@@ -148,8 +148,8 @@ questionsAry.push(dinosaursQ, constellationQ);
 
 
 // ******************************************* GLOBAL VARIABLES *******************************************
-
-var startBtn = '<button type="button" class="btn btn-danger">Click Here to Start the Game!</button>';
+// div is added so that we can remove the button
+var startBtn = '<button type="button" class="btn btn-danger" id="start-btn">Click Here to Start the Game!</button>';
 
 // ****************************************** MAIN GAME FUNCTION ******************************************
 $(document).ready(function(){
@@ -189,18 +189,16 @@ var trivia = {
 		// the game can restart with no issues.
 		trivia.remainingQuestions = [];
 		jQuery.each(questionsAry, function(i){
-			var objCopy = jQuery.extend(true, {}, questionsAry[i]);
-			trivia.remainingQuestions[i] = objCopy;
+			trivia.remainingQuestions[i] = jQuery.extend(true, {}, questionsAry[i]);
 		});
-		console.log("trivia.remainingQuestions(local:", trivia.remainingQuestions);
+		console.log("initial set of questions:", trivia.remainingQuestions);
 		// sets initial values
 		trivia.numCorrect = 0;
 		trivia.numIncorrect = 0;
 		trivia.numUnanswered = 0;
 
-		console.log(trivia.numCorrect, trivia.numIncorrect, trivia.numUnanswered);
 		// prints startGame button
-		$("#start-btn").html(startBtn);
+		trivia.addButton(startBtn);
 
 		// listens for button click to start the game
 		$("#start-btn").click(function(){
@@ -277,7 +275,7 @@ var trivia = {
 		// clears the screen so that the displays can appear to be a new "screen" when they are printed
 
 		// clears buttons
-		$("#start-btn").empty();
+		$("#start-btn").remove();
 
 		// clears questions and answers
 		$("#question-div").empty();
@@ -293,6 +291,9 @@ var trivia = {
 			// call displayGameOver()
 		// else
 			// call displayQuestion()
+	},
+	addButton: function(btn) {
+		$("#button-space").append(btn);
 	}
 };
 
