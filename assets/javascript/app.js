@@ -153,7 +153,8 @@ var reptilesQ = new questionObj (
 	[{text: 'lizard', veracity: false}, 
 	{text: 'salamander', veracity: true}, 
 	{text: 'sea turtle', veracity: false}, 
-	{text: 'komodo dragon', veracity: false}],
+	{text: 'komodo dragon', veracity: false},
+	{text: 'snake', veracity: false}],
 	'salamander'); //correct answer
 var alexandriaQ = new questionObj (
 	'Where was the Library of Alexandria located?',
@@ -174,7 +175,8 @@ var volcanoesQ = new questionObj (
 	[{text: 'Mt. Rainier', veracity: false}, 
 	{text: 'Mt. Fuji', veracity: false}, 
 	{text: 'Mt. Steve', veracity: false}, 
-	{text: 'Mt. Kilimanjaro', veracity: true}],
+	{text: 'Mt. Kilimanjaro', veracity: true},
+	{text: 'Mt. St. Helens', veracity: false}],
 	'Mt. Kilimanjaro'); //correct answer
 var presidentsQ = new questionObj (
 	'Which commanding general of the Union Army served as the 18th US president in support of post-Civil War Reconstruction?',
@@ -187,7 +189,8 @@ var universeQ = new questionObj (
 	'Which of the following is generally accepted by the scientific community to be the age of the universe?',
 	[{text: 'About 13.8 billion years old.', veracity: true}, 
 	{text: 'About 7.1 trillion years old.', veracity: false}, 
-	{text: 'About 605 million years old.', veracity: false}, 
+	{text: 'About 605 million years old.', veracity: false},
+	{text: '42.', veracity: false}, 
 	{text: 'None of these. The scientific community has not even tried to calculate it.', veracity: false}],
 	'About 13.8 billion years old.'); //correct answer
 var sinQ = new questionObj (
@@ -206,14 +209,11 @@ questionsAry.push(dinosaursQ, constellationQ, reptilesQ,
 // ******************************************* GLOBAL VARIABLES *******************************************
 // div is added so that we can remove the button
 var startBtn = '<button type="button" class="btn btn-danger" id="start-btn">Click Here to Start the Game!</button>';
-var playAgainBtn = '<button type="button" class="btn btn-success" id="playagain-btn">Play Again?</button>';
+var playAgainBtn = '<button type="button" class="btn btn-primary" id="playagain-btn">Play Again?</button>';
 
 var scoreboardDiv = '';
 var qDiv = '<div class="questions" id="question-div"></div>'
-		 + '<div class="choices" id="choice-a-div"></div>'
-		 + '<div class="choices" id="choice-b-div"></div>'
-		 + '<div class="choices" id="choice-c-div"></div>'
-		 + '<div class="choices" id="choice-d-div"></div>';
+		 + '<ol type="A" id="choices-list"></ol>';
 var answDiv = '<div id="user-guess"></div>'
 			+ '<div id="correct-answer"></div>'
 			+ '<div id="result"></div>';
@@ -292,17 +292,22 @@ var trivia = {
 		// appends all empty divs related to questions and choices
 		$('#question-space').append(qDiv);
 
-		// prints Q and choices on DOM and assigns data to DOM elements simultaneously
+		// prints question on DOM and assigns data to DOM elements simultaneously
 		$('#question-div').html(thisQ.qText).data(thisQ.qText); // stores question here
-		$('#choice-a-div').html(thisQ.choices[0].text).data(thisQ.choices[0]); // stores choices here
-		$('#choice-b-div').html(thisQ.choices[1].text).data(thisQ.choices[1]);
-		$('#choice-c-div').html(thisQ.choices[2].text).data(thisQ.choices[2]);
-		$('#choice-d-div').html(thisQ.choices[3].text).data(thisQ.choices[3]);
 
-		// deletes question from remaining questions
+		// loops through the array and prints out the choices as an ordered list of type="A". I found this array
+		// approach to be more extensible, allowing me to vary the number of choices for a given question and
+		// still be able to bind the data to each element correctly.
+		jQuery.each(thisQ.choices, function(i){
+			var thisChoiceId = 'choice-' + i; // gives choice a unique id
+			$('#choices-list').append('<li class="choices" id="' + thisChoiceId + '">' 
+				+ thisQ.choices[i].text + '</li>');   // puts choice text in <li> tag
+			thisChoiceId = '#' + thisChoiceId; // adds # to beginning so i don't have to fight with quotes
+			$(thisChoiceId).data(thisQ.choices[i]); // appends data to the element
+		});		
+
+		// deletes question from remaining questions array
 		trivia.remainingQuestions.splice(randInd, 1);
-
-		console.log('after splice:', trivia.remainingQuestions);
 
 		trivia.getAnswer(corAnsw); // sends string argument with correct answer
 	},
@@ -385,10 +390,7 @@ var trivia = {
 
 		// removes questions, choices and data
 		$('#question-div').remove();
-		$('#choice-a-div').remove();
-		$('#choice-b-div').remove();
-		$('#choice-c-div').remove();
-		$('#choice-d-div').remove();
+		$('#choices-list').remove();
 		$('#user-guess').remove();
 		$('#correct-answer').remove();
 		$('#result').remove();
