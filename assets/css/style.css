@@ -1,0 +1,40 @@
+
+
+.jumbotron {
+	opacity: .8;
+	background-color: #33ff33;
+	margin-top: 20px;
+}
+
+h1#jumbotron-header {
+	margin-top: 0;
+	font-size: 4em;
+}
+
+.questions {
+	font-size: 1.1em;
+	font-weight: bold;
+}
+
+#choices-list {
+	margin: 10px 30px 0 10px;
+}
+
+.choices {
+	font-size: 1.1em;
+	margin: 0px 50px;
+}
+
+.choice-bkg-div {
+	margin-left: -50px;
+	padding: 10px 0 10px 50px;
+}
+
+.choices:hover {
+	color: #eeeeee;
+	cursor: pointer;
+}
+
+.choice-bkg-div:hover {
+	background-color: #444444;
+}

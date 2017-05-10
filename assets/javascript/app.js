@@ -328,8 +328,8 @@ var trivia = {
 		// still be able to bind the data to each element correctly.
 		jQuery.each(thisQ.choices, function(i){
 			var thisChoiceId = 'choice-' + i; // gives choice a unique id
-			$('#choices-list').append('<li class="choices" id="' + thisChoiceId + '">' 
-				+ thisQ.choices[i].text + '</li>');   // puts choice text in <li> tag
+			$('#choices-list').append('<li class="choices" id="' + thisChoiceId + '">' // puts choice text in <li> tag
+				+ '<div class="choice-bkg-div">' + thisQ.choices[i].text + '</div></li>'); //choice-bk-div for css
 			thisChoiceId = '#' + thisChoiceId; // adds # to beginning so i don't have to fight with quotes
 			$(thisChoiceId).data(thisQ.choices[i]); // appends data to the element
 		});		
