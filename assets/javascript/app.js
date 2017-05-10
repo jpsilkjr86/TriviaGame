@@ -31,14 +31,11 @@ var trivia = {
 			// if interval = 0, call  pauseTimer and timeOut()
 
 	},
-	resetTimer: function() {
-		// insert reset code here
-	},
 	timeOut: function() {
 		// numUnanswered++
 		// calls clearScreen() to remove DOM elements and their data
 		// display messages 
-		// waitforNext()
+		// waitForNext()
 	},
 	pauseTimer: function() {
 		// stops the timer where it is at
@@ -179,7 +176,7 @@ var volcanoesQ = new questionObj (
 	{text: 'Mt. St. Helens', veracity: false}],
 	'Mt. Kilimanjaro'); //correct answer
 var presidentsQ = new questionObj (
-	'Which commanding general of the Union Army served as the 18th US president in support of post-Civil War Reconstruction?',
+	'Which commanding general of the Union Army served as the 18th US president and led the efforts for post-Civil-War Reconstruction?',
 	[{text: 'Robert E. Lee', veracity: false}, 
 	{text: 'Andrew Johnson', veracity: false}, 
 	{text: 'Ulysses S. Grant', veracity: true}, 
@@ -218,9 +215,12 @@ var answDiv = '<div id="user-guess"></div>'
 			+ '<div id="correct-answer"></div>'
 			+ '<div id="result"></div>';
 var gameOverDiv = '<div class="text-center" id="game-over"></div>';
+var timeOutDiv = '<div class="text-center" id="timeout"></div>';
 
 // ****************************************** MAIN GAME FUNCTION ******************************************
 $(document).ready(function(){
+
+var timerInterval;
 
 // Whole trivia game housed in an object called trivia
 var trivia = {
@@ -230,28 +230,54 @@ var trivia = {
 	numIncorrect: 0,
 	numUnanswered: 0,
 	countDown: function() {
-		// set interval
+		// sets initial time remaining and displays it
+		trivia.timeRemaining = 12;
+		trivia.convertAndDisplayTime(trivia.timeRemaining);
 
-		// conditions for calling pauseTimer
+		// sets the interval for displaying the time
+		timerInterval = setInterval(function(){
+			trivia.timeRemaining--;
+			trivia.convertAndDisplayTime(trivia.timeRemaining);
+			// conditions for calling pauseTimer() and timeOut()
+			if(trivia.timeRemaining === 0) {
+				trivia.pauseTimer();
+				trivia.timeOut();
+			}
+		}, 1000);
 
-			// if interval = 0, call  pauseTimer and timeOut()
-
-	},
-	resetTimer: function() {
-		// insert reset code here
 	},
 	timeOut: function() {
-		// numUnanswered++
 		// calls clearScreen() to remove DOM elements and their data
-		// display messages 
-		// waitforNext()
+		trivia.clearScreen();
+
+		// updates scoreboard
+		trivia.numUnanswered++;
+		trivia.updateScoreboard();		
+
+		// creates an empty div
+		$('#result-space').append(timeOutDiv);
+
+		// displays timeout message
+		$('#timeout').html('<strong>Sorry, you are out of time.</strong>');
+
+		trivia.waitForNext();
 	},
 	pauseTimer: function() {
 		// stops the timer where it is at
+		clearInterval(timerInterval);
+	},
+	convertAndDisplayTime: function(t) {
+		if (t >= 10 && t < 60) {
+			$('#timer').html('0:' + t);
+		}
+		else if  (t >= 0 && t < 10) {
+			$('#timer').html('0:0' + t);
+		}
 	},
 	startGame: function() {
 		// first clears the screen
 		trivia.clearScreen();
+		$('#timer').empty(); // clears the timer in case there is any
 
 		// deep copies questionsAry onto remainingQuestions to avoid global data changes, thus ensuring
 		// the game can restart with no issues.
@@ -264,6 +290,7 @@ var trivia = {
 		trivia.numCorrect = 0;
 		trivia.numIncorrect = 0;
 		trivia.numUnanswered = 0;
+		trivia.timeRemaining = 0;
 
 		// prints initial scoreboard
 		trivia.updateScoreboard();
@@ -279,10 +306,11 @@ var trivia = {
 	},
 	displayQuestion: function() {
 		// calls clearScreen(), removes any DOM elements from the board and their data
-		console.log('displayQuestion() called');
+		console.log('remainingQuestions:', trivia.remainingQuestions);
 		trivia.clearScreen();
 
 		// calls countDown() to start the timer
+		trivia.countDown();
 
 		// pulls a random question from remainingQuestions array, saves as new question
 		var randInd = Math.floor(Math.random() * trivia.remainingQuestions.length);
@@ -319,7 +347,7 @@ var trivia = {
 		$('.choices').click(function(){
 			userGuess = $(this).data();
 
-			// calls pauseTimer()
+			trivia.pauseTimer();
 
 			trivia.displayResult(userGuess, corAnsw);
 		});
@@ -376,14 +404,9 @@ var trivia = {
 			trivia.startGame();
 		});
 
-
-		// prints continue button "Click Here to Continue"
-
-			// listens for button click to call startGame()
 	},
+	// clears the screen so that the displays can appear to be a new "screen" when they are printed
 	clearScreen: function() {
-		// clears the screen so that the displays can appear to be a new "screen" when they are printed
-
 		// removes buttons and its event listener
 		$('#start-btn').remove();
 		$('#playagain-btn').remove();
@@ -395,7 +418,9 @@ var trivia = {
 		$('#correct-answer').remove();
 		$('#result').remove();
 		$('#game-over').remove();
+		$('#timeout').remove();		
 	},
+	// functionality for setting an interval after a user chooses an answer & deciding which function to call next
 	waitForNext: function() {
 		// setTimeout timer for 5 seconds before moving to the next screen
 		setTimeout(function(){
@@ -416,8 +441,6 @@ var trivia = {
 };
 
 trivia.startGame(); // calls startGame() to initialize!
-
-
 
 
 // ERROR CHECKING: 
