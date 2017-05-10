@@ -1,7 +1,7 @@
 // ********************************************** PSEUDO-CODE **********************************************
 /* 
 
-Pseudo-Code: First Draft
+Pseudo-Code: First Draft of Pseudo-Code (implementation is a bit different)
 
 TITLE: Trivia Game (Advanced)
 
@@ -148,15 +148,65 @@ var constellationQ = new questionObj (
 	{text: 'Polaris', veracity: true}, 
 	{text: 'Cetus', veracity: false}],
 	'Polaris'); //correct answer
-	 
+var reptilesQ = new questionObj (
+	'Which of the following is not a reptile?',
+	[{text: 'lizard', veracity: false}, 
+	{text: 'salamander', veracity: true}, 
+	{text: 'sea turtle', veracity: false}, 
+	{text: 'komodo dragon', veracity: false}],
+	'salamander'); //correct answer
+var alexandriaQ = new questionObj (
+	'Where was the Library of Alexandria located?',
+	[{text: 'Egypt', veracity: true}, 
+	{text: 'Rome', veracity: false}, 
+	{text: 'Greece', veracity: false}, 
+	{text: "What's a library?", veracity: false}],
+	'Egypt'); //correct answer
+var europeQ = new questionObj (
+	'Which of the following is not a country in Europe?',
+	[{text: 'Albania', veracity: false}, 
+	{text: 'Algeria', veracity: true}, 
+	{text: 'Serbia', veracity: false}, 
+	{text: 'Lithuania', veracity: false}],
+	'Algeria'); //correct answer
+var volcanoesQ = new questionObj (
+	'Which of the following volcanoes also happens to be the tallest mountain in Africa?',
+	[{text: 'Mt. Rainier', veracity: false}, 
+	{text: 'Mt. Fuji', veracity: false}, 
+	{text: 'Mt. Steve', veracity: false}, 
+	{text: 'Mt. Kilimanjaro', veracity: true}],
+	'Mt. Kilimanjaro'); //correct answer
+var presidentsQ = new questionObj (
+	'Which commanding general of the Union Army served as the 18th US president in support of post-Civil War Reconstruction?',
+	[{text: 'Robert E. Lee', veracity: false}, 
+	{text: 'Andrew Johnson', veracity: false}, 
+	{text: 'Ulysses S. Grant', veracity: true}, 
+	{text: 'Jake Weary', veracity: false}],
+	'Ulysses S. Grant'); //correct answer
+var universeQ = new questionObj (
+	'Which of the following is generally accepted by the scientific community to be the age of the universe?',
+	[{text: 'About 13.8 billion years old.', veracity: true}, 
+	{text: 'About 7.1 trillion years old.', veracity: false}, 
+	{text: 'About 605 million years old.', veracity: false}, 
+	{text: 'None of these. The scientific community has not even tried to calculate it.', veracity: false}],
+	'About 13.8 billion years old.'); //correct answer
+var sinQ = new questionObj (
+	'What is sin(30 degrees)?',
+	[{text: 'square root of 2', veracity: false}, 
+	{text: 'square root of 3', veracity: false}, 
+	{text: '1/2', veracity: true}, 
+	{text: 'This question has baffled mathematicians for centuries...', veracity: false}],
+	'1/2'); //correct answer
 
-questionsAry.push(dinosaursQ, constellationQ);
+
+questionsAry.push(dinosaursQ, constellationQ, reptilesQ, 
+	alexandriaQ, europeQ, volcanoesQ, presidentsQ, universeQ, sinQ);
 
 
 // ******************************************* GLOBAL VARIABLES *******************************************
 // div is added so that we can remove the button
 var startBtn = '<button type="button" class="btn btn-danger" id="start-btn">Click Here to Start the Game!</button>';
-var playAgainBtn = '<button type="button" class="btn btn-success btn-sm" id="playagain-btn">Play Again?</button>';
+var playAgainBtn = '<button type="button" class="btn btn-success" id="playagain-btn">Play Again?</button>';
 
 var scoreboardDiv = '';
 var qDiv = '<div class="questions" id="question-div"></div>'
@@ -282,8 +332,8 @@ var trivia = {
 		$('#result-space').append(answDiv);
 
 		// display results according to information stored in this method's arguments
-		$('#user-guess').append('You guessed: ' + userGuess.text + '.');
-		$('#correct-answer').append('Correct answer: ' + corAnsw + '.');
+		$('#user-guess').append('You guessed: "' + userGuess.text + '"');
+		$('#correct-answer').append('Correct answer: "' + corAnsw + '"');
 
 		// conditional checking if their answer was correct
 		if (userGuess.veracity) {
@@ -357,9 +407,9 @@ var trivia = {
 		$('#button-space').append(btn);
 	},
 	updateScoreboard: function() {
-		$('#scoreboard').html('Correct: ' + trivia.numCorrect + 
-			'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Incorrect: ' + trivia.numIncorrect + 
-			'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Unsanswered: ' + trivia.numUnanswered);
+		$('#scoreboard').html('Correct: <span class="badge">' + trivia.numCorrect + '</span>' +
+			'&nbsp;&nbsp;&nbsp;&nbsp;Incorrect: <span class="badge">' + trivia.numIncorrect + '</span>' +
+			'&nbsp;&nbsp;&nbsp;&nbsp;Unsanswered: <span class="badge">' + trivia.numUnanswered + '</span>');
 	}
 };
 
