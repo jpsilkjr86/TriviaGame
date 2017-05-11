@@ -320,21 +320,12 @@ var trivia = {
 		// appends all empty divs related to questions and choices
 		$('#question-space').append(qDiv);
 
-		// prints question on DOM and assigns data to DOM elements simultaneously
-		$('#question-div').html(thisQ.qText).data(thisQ.qText); // stores question here
-
-		
-		// jQuery.each(thisQ.choices, function(i){
-		// 	var thisChoiceId = 'choice-' + i; // gives choice a unique id
-		// 	$('#choices-list').append('<li class="choices" id="' + thisChoiceId + '">' // puts choice text in <li> tag
-		// 		+ '<div class="choice-bkg-div">' + thisQ.choices[i].text + '</div></li>'); //choice-bk-div for css
-		// 	thisChoiceId = '#' + thisChoiceId; // adds # to beginning so i don't have to fight with quotes
-		// 	$(thisChoiceId).data(thisQ.choices[i]); // appends data to the element
-		// });		
+		// prints question on DOM and assigns data to it simultaneously
+		$('#question-div').html(thisQ.qText).data(thisQ.qText);
 
 		trivia.printMixedUpChoices(thisQ.choices);
 
-		// deletes question from remaining questions array
+		// splices question from remaining questions array
 		trivia.remainingQuestions.splice(randInd, 1);
 
 		trivia.getAnswer(corAnsw); // sends string argument with correct answer
@@ -351,7 +342,7 @@ var trivia = {
 			choices.length > 0;  // closing condition is when choices array length equals 0
 			i = Math.floor(Math.random() * choices.length))  // pulls another random choice after each iteration
 		
-		// beginning of the for-loop
+		// beginning of for-loop
 		{ 
 			// sets a unique id for the given choice
 			var thisChoiceId = 'choice-' + uniqueId; 
@@ -370,9 +361,9 @@ var trivia = {
 			// splices the choice from the array. this ensures the loop doesn't continue forever
 			choices.splice(i, 1); 
 
-			// change the uniqueId for the next choice randomly generated
+			// change the uniqueId for the next choice
 			uniqueId++; 
-		} // end of for loop
+		} // end of for-loop
 	},
 	getAnswer: function(corAnsw) {
 		
@@ -443,7 +434,7 @@ var trivia = {
 		$('#start-btn').remove();
 		$('#playagain-btn').remove();
 
-		// removes questions, choices and data
+		// removes DOM elements and their data
 		$('#question-div').remove();
 		$('#choices-list').remove();
 		$('#user-guess').remove();
@@ -456,6 +447,7 @@ var trivia = {
 	waitForNext: function() {
 		// setTimeout timer for 5 seconds before moving to the next screen
 		setTimeout(function(){
+			// conditions for determining whether to display game over or proceed to the next question
 			if (trivia.remainingQuestions.length === 0) 
 				{trivia.displayGameOver();}
 			else
@@ -474,7 +466,6 @@ var trivia = {
 
 trivia.startGame(); // calls startGame() to initialize!
 
-
 // ERROR CHECKING: 
 	// $(document).keypress(function(e){
 
@@ -484,6 +475,5 @@ trivia.startGame(); // calls startGame() to initialize!
 	// 		console.log('questionsAry(global):', questionsAry);			
 	// 	} // end of if (e.key === 'q')
 	// }); // end of document.keypress
-
 
 }); // end of Document Ready
