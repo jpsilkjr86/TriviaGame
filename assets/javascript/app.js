@@ -346,19 +346,32 @@ var trivia = {
 		// uniqueId is for creating a unique div id for each choice
 		var uniqueId = 1;
 
-		// special for-loop that loops randomly through the array and prints the choices in random order
+		// special for-loop that randomly loops through the array and prints the choices in random order
 		for (i = Math.floor(Math.random() * choices.length); // iterator starts as a random choice
 			choices.length > 0;  // closing condition is when choices array length equals 0
 			i = Math.floor(Math.random() * choices.length))  // pulls another random choice after each iteration
+		
+		// beginning of the for-loop
 		{ 
-			// sets a unique id for the given choice through concatenation
+			// sets a unique id for the given choice
 			var thisChoiceId = 'choice-' + uniqueId; 
-			// appends choices onto <ol id="choices-list">
-			$('#choices-list').append('<li class="choices" id="' + thisChoiceId + '">' // wraps choice text in <li> tag
-				+ '<div class="choice-bkg-div">' + choices[i].text + '</div></li>'); //choice-bk-div for css
-			$('#' + thisChoiceId).data(choices[i]); // appends data to the element
-			choices.splice(i, 1); // splices the choice from the array. this ensures the loop doesn't continue forever
-			uniqueId++; // change the uniqueId for the next choice randomly generated
+
+			// appends choice as a <li> child of <ol id="choices-list">
+			$('#choices-list').append('<li id="' + thisChoiceId + '">');
+
+			// adds # before id to avoid fighting with quotes later on
+			thisChoiceId = '#' + thisChoiceId; 
+
+			// adds class, html, and data to thisChoiceId
+			$(thisChoiceId).addClass('choices') // for event listeners later in the game
+				.append('<div class="choice-bkg-div">' + choices[i].text + '</div>') // div for CSS styling including hover
+				.data(choices[i]); // appends data to the element
+
+			// splices the choice from the array. this ensures the loop doesn't continue forever
+			choices.splice(i, 1); 
+
+			// change the uniqueId for the next choice randomly generated
+			uniqueId++; 
 		} // end of for loop
 	},
 	getAnswer: function(corAnsw) {
@@ -463,13 +476,14 @@ trivia.startGame(); // calls startGame() to initialize!
 
 
 // ERROR CHECKING: 
-	$(document).keypress(function(e){
+	// $(document).keypress(function(e){
 
-		if (e.key === 'q') {
-			trivia.startGame();
-			console.log('questionsAry(global):', questionsAry);			
-		} // end of if (e.key === 'q')
-	}); // end of document.keypress
+	// 	if (e.key === 'q') {
+	// 		trivia.pauseTimer();
+	// 		trivia.startGame();
+	// 		console.log('questionsAry(global):', questionsAry);			
+	// 	} // end of if (e.key === 'q')
+	// }); // end of document.keypress
 
 
 }); // end of Document Ready
