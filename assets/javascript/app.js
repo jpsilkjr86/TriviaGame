@@ -366,12 +366,9 @@ var trivia = {
 		} // end of for-loop
 	},
 	getAnswer: function(corAnsw) {
-		
-		var userGuess;
-
 		// selector for getting response from user click on the DOM (data stored on DOM already)
 		$('.choices').click(function(){
-			userGuess = $(this).data();
+			var userGuess = $(this).data();
 
 			trivia.pauseTimer();
 

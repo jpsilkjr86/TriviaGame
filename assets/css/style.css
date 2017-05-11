@@ -38,3 +38,7 @@ h1#jumbotron-header {
 .choice-bkg-div:hover {
 	background-color: #444444;
 }
+
+.choice-bkg-div:active {
+	background-color: #181818;
+}
