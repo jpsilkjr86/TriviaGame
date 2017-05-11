@@ -225,13 +225,13 @@ var timerInterval;
 // Whole trivia game housed in an object called trivia
 var trivia = {
 	timeRemaining: 30, // initial time set to 30 seconds
-	remainingQuestions: [], // empty array of remaining questions, which has deep copies of question objects
+	remainingQuestions: [], // empty array of remaining questions, which will receive deep copies of question objects
 	numCorrect: 0,
 	numIncorrect: 0,
 	numUnanswered: 0,
 	countDown: function() {
 		// sets initial time remaining and displays it
-		trivia.timeRemaining = 12;
+		trivia.timeRemaining = 30;
 		trivia.convertAndDisplayTime(trivia.timeRemaining);
 
 		// sets the interval for displaying the time
@@ -254,7 +254,7 @@ var trivia = {
 		trivia.numUnanswered++;
 		trivia.updateScoreboard();		
 
-		// creates an empty div
+		// creates an empty div #timeout
 		$('#result-space').append(timeOutDiv);
 
 		// displays timeout message
@@ -268,10 +268,10 @@ var trivia = {
 	},
 	convertAndDisplayTime: function(t) {
 		if (t >= 10 && t < 60) {
-			$('#timer').html('0:' + t);
+			$('#timer').html('Time Remaining: 0:' + t);
 		}
 		else if  (t >= 0 && t < 10) {
-			$('#timer').html('0:0' + t);
+			$('#timer').html('Time Remaining: 0:0' + t);
 		}
 	},
 	startGame: function() {
@@ -279,11 +279,11 @@ var trivia = {
 		trivia.clearScreen();
 		$('#timer').empty(); // clears the timer in case there is any
 
-		// deep copies questionsAry onto remainingQuestions to avoid global data changes, thus ensuring
-		// the game can restart with no issues.
+		// deep copies questionsAry onto .remainingQuestions array property of trivia object. This 
+		// ensures that the game can restart properly with no alteration of global data.
 		trivia.remainingQuestions = [];
 		jQuery.each(questionsAry, function(i){
-			trivia.remainingQuestions[i] = jQuery.extend(true, {}, questionsAry[i]);
+			trivia.remainingQuestions[i] = jQuery.extend(true, {}, questionsAry[i]); // deep copy 
 		});
 		console.log('initial set of questions:', trivia.remainingQuestions);
 		// sets initial values
@@ -323,21 +323,43 @@ var trivia = {
 		// prints question on DOM and assigns data to DOM elements simultaneously
 		$('#question-div').html(thisQ.qText).data(thisQ.qText); // stores question here
 
-		// loops through the array and prints out the choices as an ordered list of type="A". I found this array
-		// approach to be more extensible, allowing me to vary the number of choices for a given question and
-		// still be able to bind the data to each element correctly.
-		jQuery.each(thisQ.choices, function(i){
-			var thisChoiceId = 'choice-' + i; // gives choice a unique id
-			$('#choices-list').append('<li class="choices" id="' + thisChoiceId + '">' // puts choice text in <li> tag
-				+ '<div class="choice-bkg-div">' + thisQ.choices[i].text + '</div></li>'); //choice-bk-div for css
-			thisChoiceId = '#' + thisChoiceId; // adds # to beginning so i don't have to fight with quotes
-			$(thisChoiceId).data(thisQ.choices[i]); // appends data to the element
-		});		
+		
+		// jQuery.each(thisQ.choices, function(i){
+		// 	var thisChoiceId = 'choice-' + i; // gives choice a unique id
+		// 	$('#choices-list').append('<li class="choices" id="' + thisChoiceId + '">' // puts choice text in <li> tag
+		// 		+ '<div class="choice-bkg-div">' + thisQ.choices[i].text + '</div></li>'); //choice-bk-div for css
+		// 	thisChoiceId = '#' + thisChoiceId; // adds # to beginning so i don't have to fight with quotes
+		// 	$(thisChoiceId).data(thisQ.choices[i]); // appends data to the element
+		// });		
+
+		trivia.printMixedUpChoices(thisQ.choices);
 
 		// deletes question from remaining questions array
 		trivia.remainingQuestions.splice(randInd, 1);
 
 		trivia.getAnswer(corAnsw); // sends string argument with correct answer
+	},
+	// loops through the choices array and prints them out in a random order wrapped in <ol type"A"><li> DOM tags.
+	// I found this approach to be more extensible as it allows me to vary the number of choices for any given
+	// question and still be able to mix up the order and bind data to each element with precision.
+	printMixedUpChoices: function(choices) {   // takes in a choices array as an argument
+		// uniqueId is for creating a unique div id for each choice
+		var uniqueId = 1;
+
+		// special for-loop that loops randomly through the array and prints the choices in random order
+		for (i = Math.floor(Math.random() * choices.length); // iterator starts as a random choice
+			choices.length > 0;  // closing condition is when choices array length equals 0
+			i = Math.floor(Math.random() * choices.length))  // pulls another random choice after each iteration
+		{ 
+			// sets a unique id for the given choice through concatenation
+			var thisChoiceId = 'choice-' + uniqueId; 
+			// appends choices onto <ol id="choices-list">
+			$('#choices-list').append('<li class="choices" id="' + thisChoiceId + '">' // wraps choice text in <li> tag
+				+ '<div class="choice-bkg-div">' + choices[i].text + '</div></li>'); //choice-bk-div for css
+			$('#' + thisChoiceId).data(choices[i]); // appends data to the element
+			choices.splice(i, 1); // splices the choice from the array. this ensures the loop doesn't continue forever
+			uniqueId++; // change the uniqueId for the next choice randomly generated
+		} // end of for loop
 	},
 	getAnswer: function(corAnsw) {
 		
@@ -350,10 +372,7 @@ var trivia = {
 			trivia.pauseTimer();
 
 			trivia.displayResult(userGuess, corAnsw);
-		});
-			
-
-			
+		});			
 	},
 	displayResult: function(userGuess, corAnsw) {
 		// stores DOM element animation / gif if there is any
