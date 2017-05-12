@@ -1,9 +1,8 @@
 // ******************************************* GLOBAL VARIABLES *******************************************
 // div is added so that we can remove the button
 var startBtn = '<button type="button" class="btn btn-danger" id="start-btn">Click Here to Start the Game!</button>';
-var playAgainBtn = '<button type="button" class="btn btn-primary" id="playagain-btn">Play Again?</button>';
+var mainMenuBtn = '<button type="button" class="btn btn-primary" id="mainmenu-btn">Return to Main Menu</button>';
 
-var scoreboardDiv = '';
 var qDiv = '<div class="questions" id="question-div"></div>'
 		 + '<ol type="A" id="choices-list"></ol>';
 var answDiv = '<div id="user-guess"></div>'
@@ -69,18 +68,48 @@ var trivia = {
 			$('#timer').html('Time Remaining: 0:0' + t);
 		}
 	},
-	startGame: function() {
+	startScreen: function() {
 		// first clears the screen
 		trivia.clearScreen();
 		$('#timer').empty(); // clears the timer in case there is any
 
-		// deep copies questionsAry onto .remainingQuestions array property of trivia object. This 
+		// prints startScreen header
+		var h = $('<h3>');
+		h.text('Choose a category.')
+			.appendTo('#menu-space');
+		
+		// creates a div with data for each category in allCategories
+		jQuery.each(allCategories, function(i){
+			var newCat = $('<h4>');
+			newCat.addClass('category') // adds class for CSS and click event listeners
+				.text(allCategories[i].name) // prints the category name
+				.attr('id', 'category-' + i) // gives it a unique id 
+				.data(allCategories[i].qAry) // data equals the array of questions in that category
+				.appendTo('#menu-space'); // appends all this onto menu-space div
+		});
+		
+		// click event listener for choosing the category of trivia questions and sending that
+		// data to trivia.startGame()
+		$('.category').click(function(){
+			var selectedCategory = $(this).data();
+			$('#menu-space').empty();
+			trivia.startGame(selectedCategory);
+		});
+	},
+	startGame: function(category) {
+		// first clears the screen
+		trivia.clearScreen();
+		$('#timer').empty(); // clears the timer in case there is any
+
+		// deep copies each question in category[] onto .remainingQuestions array property of trivia object. This 
 		// ensures that the game can restart properly with no alteration of global data.
 		trivia.remainingQuestions = [];
-		jQuery.each(questionsAry, function(i){
-			trivia.remainingQuestions[i] = jQuery.extend(true, {}, questionsAry[i]); // deep copy 
+		jQuery.each(category, function(i){
+			trivia.remainingQuestions[i] = jQuery.extend(true, {}, category[i]); // deep copy 
 		});
+
 		console.log('initial set of questions:', trivia.remainingQuestions);
+		
 		// sets initial values
 		trivia.numCorrect = 0;
 		trivia.numIncorrect = 0;
@@ -90,7 +119,7 @@ var trivia = {
 		// prints initial scoreboard
 		trivia.updateScoreboard();
 
-		// prints startGame button
+		// prints startBtn button
 		trivia.addButton(startBtn);
 
 		// listens for button click to start the game
@@ -210,13 +239,12 @@ var trivia = {
 		$('#result-space').append(gameOverDiv);
 		$('#game-over').append("<strong>Game over.</strong>");
 
-		// prints startGame button
-		trivia.addButton(playAgainBtn);
+		// prints mainMenuBtn button
+		trivia.addButton(mainMenuBtn);
 
-		// listens for button click to start the game
-		$('#playagain-btn').click(function(){
-			// calls displayQuestion()
-			trivia.startGame();
+		// listens for button click to return to the main menu
+		$('#mainmenu-btn').click(function(){
+			trivia.startScreen();
 		});
 
 	},
@@ -224,7 +252,7 @@ var trivia = {
 	clearScreen: function() {
 		// removes buttons and its event listener
 		$('#start-btn').remove();
-		$('#playagain-btn').remove();
+		$('#mainmenu-btn').remove();
 
 		// removes DOM elements and their data
 		$('#question-div').remove();
@@ -256,14 +284,14 @@ var trivia = {
 	}
 }; // end of trivia object declaration
 
-trivia.startGame(); // calls startGame() to initialize trivia game!
+trivia.startScreen(); // calls startScreen() to initialize trivia game!
 
 // ERROR CHECKING: 
 	// $(document).keypress(function(e){
 
 	// 	if (e.key === 'q') {
 	// 		trivia.pauseTimer();
-	// 		trivia.startGame();
+	// 		trivia.startScreen();
 	// 		console.log('questionsAry(global):', questionsAry);			
 	// 	} // end of if (e.key === 'q')
 	// }); // end of document.keypress
