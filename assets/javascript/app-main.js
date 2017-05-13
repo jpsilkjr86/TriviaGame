@@ -18,14 +18,14 @@ var timerInterval;
 
 // Whole trivia game housed in an object called trivia
 var trivia = {
-	timeRemaining: 30, // initial time set to 30 seconds
+	timeRemaining: 45, // initial time set to 45 seconds
 	remainingQuestions: [], // empty array of remaining questions, which will receive deep copies of question objects
 	numCorrect: 0,
 	numIncorrect: 0,
 	numUnanswered: 0,
 	countDown: function() {
 		// sets initial time remaining and displays it
-		trivia.timeRemaining = 30;
+		trivia.timeRemaining = 45;
 		trivia.convertAndDisplayTime(trivia.timeRemaining);
 
 		// sets the interval for displaying the time
@@ -60,6 +60,7 @@ var trivia = {
 		// stops the timer where it is at
 		clearInterval(timerInterval);
 	},
+	// takes any t argument < 60s and converts it into a standard time display. 
 	convertAndDisplayTime: function(t) {
 		if (t >= 10 && t < 60) {
 			$('#timer').html('Time Remaining: 0:' + t);
@@ -68,6 +69,7 @@ var trivia = {
 			$('#timer').html('Time Remaining: 0:0' + t);
 		}
 	},
+	// start menu for the user, displays categories they can choose for the trivia game
 	startScreen: function() {
 		// first clears the screen
 		trivia.clearScreen();
@@ -96,6 +98,7 @@ var trivia = {
 			trivia.startGame(selectedCategory);
 		});
 	},
+	// initializes the game according to the selected category, received as an argument from startScreen()
 	startGame: function(category) {
 		// first clears the screen
 		trivia.clearScreen();
@@ -147,6 +150,7 @@ var trivia = {
 		// prints question on DOM and assigns data to it simultaneously
 		$('#question-div').html(thisQ.qText).data(thisQ.qText);
 
+		// prints the multiple choices in a mixed up order
 		trivia.printMixedUpChoices(thisQ.choices);
 
 		// splices question from remaining questions array
@@ -161,7 +165,7 @@ var trivia = {
 		// uniqueId is for creating a unique div id for each choice
 		var uniqueId = 1;
 
-		// special for-loop that randomly loops through the array and prints the choices in random order
+		// special for-loop that randomly loops through the array and prints the choices in a random order
 		for (i = Math.floor(Math.random() * choices.length); // iterator starts as a random choice
 			choices.length > 0;  // closing condition is when choices array length equals 0
 			i = Math.floor(Math.random() * choices.length))  // pulls another random choice after each iteration
@@ -172,13 +176,13 @@ var trivia = {
 			var thisChoiceId = 'choice-' + uniqueId; 
 
 			// appends choice as a <li> child of <ol id="choices-list">
-			$('#choices-list').append('<li id="' + thisChoiceId + '">');
+			$('ol#choices-list').append('<li id="' + thisChoiceId + '">');
 
 			// adds # before id to avoid fighting with quotes later on
 			thisChoiceId = '#' + thisChoiceId; 
 
 			// adds class, html, and data to thisChoiceId
-			$(thisChoiceId).addClass('choices') // for event listeners later in the game
+			$(thisChoiceId).addClass('choices') // for CSS and also for event listeners later in the game
 				.append('<div class="choice-bkg-div">' + choices[i].text + '</div>') // div for CSS styling including hover
 				.data(choices[i]); // appends data to the element
 
@@ -200,8 +204,6 @@ var trivia = {
 		});			
 	},
 	displayResult: function(userGuess, corAnsw) {
-		// stores DOM element animation / gif if there is any
-
 		// calls clearScreen(), removes DOM elements from the board and their data
 		trivia.clearScreen();
 
@@ -225,16 +227,23 @@ var trivia = {
 		// updates scoreboard
 		trivia.updateScoreboard();
 
-		// plays gif or animation
-
 		// call waitForNext()
 		trivia.waitForNext();
+	},
+	// functionality for setting an interval after a user chooses an answer & deciding which function to call next
+	waitForNext: function() {
+		// setTimeout timer for 5 seconds before moving to the next screen
+		setTimeout(function(){
+			// conditions for determining whether to display game over or proceed to the next question
+			if (trivia.remainingQuestions.length === 0) 
+				{trivia.displayGameOver();}
+			else
+				{trivia.displayQuestion();}
+		}, 3500);
 	},
 	displayGameOver: function() {
 		// calls clearScreen()
 		trivia.clearScreen();
-		// displays number of correct / incorrect / unsanswered responses
-
 
 		$('#result-space').append(gameOverDiv);
 		$('#game-over').append("<strong>Game over.</strong>");
@@ -262,17 +271,6 @@ var trivia = {
 		$('#result').remove();
 		$('#game-over').remove();
 		$('#timeout').remove();		
-	},
-	// functionality for setting an interval after a user chooses an answer & deciding which function to call next
-	waitForNext: function() {
-		// setTimeout timer for 5 seconds before moving to the next screen
-		setTimeout(function(){
-			// conditions for determining whether to display game over or proceed to the next question
-			if (trivia.remainingQuestions.length === 0) 
-				{trivia.displayGameOver();}
-			else
-				{trivia.displayQuestion();}
-		}, 3500);
 	},
 	addButton: function(btn) {
 		$('#button-space').append(btn);
