@@ -40,6 +40,19 @@ var trivia = {
 		}, 1000);
 
 	},
+	// takes any t argument < 60s and converts it into a standard time display. 
+	convertAndDisplayTime: function(t) {
+		if (t >= 10 && t < 60) {
+			$('#timer').html('Time Remaining: 0:' + t);
+		}
+		else if  (t >= 0 && t < 10) {
+			$('#timer').html('Time Remaining: 0:0' + t);
+		}
+	},
+	pauseTimer: function() {
+		// stops the timer where it is at
+		clearInterval(timerInterval);
+	},
 	timeOut: function() {
 		// calls clearScreen() to remove DOM elements and their data
 		trivia.clearScreen();
@@ -56,21 +69,12 @@ var trivia = {
 
 		trivia.waitForNext();
 	},
-	pauseTimer: function() {
-		// stops the timer where it is at
-		clearInterval(timerInterval);
-	},
-	// takes any t argument < 60s and converts it into a standard time display. 
-	convertAndDisplayTime: function(t) {
-		if (t >= 10 && t < 60) {
-			$('#timer').html('Time Remaining: 0:' + t);
-		}
-		else if  (t >= 0 && t < 10) {
-			$('#timer').html('Time Remaining: 0:0' + t);
-		}
-	},
 	// start menu for the user, displays categories they can choose for the trivia game
 	startScreen: function() {
+		// sets classes for CSS styling
+		$('body').attr('class', 'bar-theme');
+		$('div.jumbotron').attr('class', 'jumbotron bar-theme');
+
 		// first clears the screen
 		trivia.clearScreen();
 		$('#timer').empty(); // clears the timer in case there is any
@@ -86,7 +90,7 @@ var trivia = {
 			newCat.addClass('category') // adds class for CSS and click event listeners
 				.text(allCategories[i].name) // prints the category name
 				.attr('id', 'category-' + i) // gives it a unique id 
-				.data(allCategories[i].qAry) // data equals the array of questions in that category
+				.data(allCategories[i]) // data equals the category object
 				.appendTo('#menu-space'); // appends all this onto menu-space div
 		});
 		
@@ -104,11 +108,15 @@ var trivia = {
 		trivia.clearScreen();
 		$('#timer').empty(); // clears the timer in case there is any
 
-		// deep copies each question in category[] onto .remainingQuestions array property of trivia object. This 
+		// sets CSS theme associated with the category
+		$('body').attr('class', category.cssTheme);
+		$('div.jumbotron').attr('class', 'jumbotron ' + category.cssTheme);
+
+		// deep copies each question in category.qAry onto .remainingQuestions array property of trivia object. This 
 		// ensures that the game can restart properly with no alteration of global data.
 		trivia.remainingQuestions = [];
-		jQuery.each(category, function(i){
-			trivia.remainingQuestions[i] = jQuery.extend(true, {}, category[i]); // deep copy 
+		jQuery.each(category.qAry, function(i){
+			trivia.remainingQuestions[i] = jQuery.extend(true, {}, category.qAry[i]); // deep copy 
 		});
 
 		console.log('initial set of questions:', trivia.remainingQuestions);

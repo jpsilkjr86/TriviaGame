@@ -34,9 +34,10 @@ function questionObj (qText, choices, correctAnswer) {
 
 // FUNCTION CONSTRUCTOR FOR CATEGORY OBJECTS
 
-function categoryObj (name, qAry) {
+function categoryObj (name, qAry, cssTheme) {
 	this.name = name;
 	this.qAry = qAry;
+	this.cssTheme = cssTheme;
 }
 
 
@@ -385,11 +386,11 @@ mathQAry.push(sinQ, angleQ, primeQ, sequenceQ, algebraQ, trigQ, hardSequenceQ);
 /* =========== III. CATEGORY OBJECT DECLARATIONS =========== */
 
 // Declare each category as an object of type categoryObj()
-var biologyCategory = new categoryObj('Biology', biologyQAry);
-var universeCategory = new categoryObj('The Universe', universeQAry);
-var geographyCategory = new categoryObj('Geography', geographyQAry);
-var historyCategory = new categoryObj('History', historyQAry);
-var mathCategory = new categoryObj('Mathematics', mathQAry);
+var biologyCategory = new categoryObj('Biology', biologyQAry, 'biology-theme');
+var universeCategory = new categoryObj('The Universe', universeQAry, 'universe-theme');
+var geographyCategory = new categoryObj('Geography', geographyQAry, 'geography-theme');
+var historyCategory = new categoryObj('History', historyQAry, 'history-theme');
+var mathCategory = new categoryObj('Mathematics', mathQAry, 'math-theme');
 
 
 // Declare the allCategories[] array which will hold all the category objects

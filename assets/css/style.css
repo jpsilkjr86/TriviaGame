@@ -1,23 +1,82 @@
+/* Theme for Start Screen */
+body.bar-theme {
+	background-image: url("../images/bar.jpg");
+}
 
-
-.jumbotron {
-	opacity: .8;
-	background-color: #33ff33;
+.jumbotron.bar-theme {
+	opacity: .95;
+	background-color: #ff8888;
 	margin-top: 20px;
 }
+
+/* Theme for Biology Category */
+body.biology-theme {
+	background-image: url("../images/fern.jpg");
+}
+
+.jumbotron.biology-theme {
+	opacity: .92;
+	background-color: #88ff88;
+	margin-top: 20px;
+}
+/* Theme for Universe Category */
+body.universe-theme {
+	background-image: url("../images/stars.jpg");
+}
+
+.jumbotron.universe-theme {
+	opacity: .90;
+	background-color: #8888ff;
+	margin-top: 20px;
+}
+/* Theme for Geography Category */
+body.geography-theme {
+	background-image: url("../images/canyon.jpg");
+}
+
+.jumbotron.geography-theme {
+	opacity: .90;
+	background-color: #aa9988;
+	margin-top: 20px;
+}
+/* Theme for History Category */
+body.history-theme {
+	background-image: url("../images/castle.jpg");
+}
+
+.jumbotron.history-theme {
+	opacity: .90;
+	background-color: #9999bb;
+	margin-top: 20px;
+}
+/* Theme for Math Category */
+body.math-theme {
+	background-image: url("../images/hexagons.jpg");
+}
+
+.jumbotron.math-theme {
+	opacity: .90;
+	background-color: #ccbb88;
+	margin-top: 20px;
+}
+
+/* ====================================== */
 
 h1#jumbotron-header {
 	margin-top: 0;
 	font-size: 4em;
+	color: #eeeeee;
+	text-shadow: 0 0 12px #55ff55, 0 0 5px black, 2px 2px 2px black;
 }
 
 .category {
-	width: 200px;
-	margin-left: auto;
-	margin-right: auto;
+	display: inline-block;
+	width: 250px;
+	margin: 10px;
 	padding: 10px 0;
 	background-color: #7777ee;
 	border-radius: 10px;
+	box-shadow: 0 0 4px purple;
 	color: #eeeeee;
 	text-shadow: 0 0 2px black;
 }
