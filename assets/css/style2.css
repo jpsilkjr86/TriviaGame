@@ -1,0 +1,58 @@
+/* -------------------------------- General Styles Page --------------------------------*/
+
+h1#jumbotron-header {
+	margin-top: 0;
+	font-size: 4em;
+	color: #eeeeee;
+	text-shadow: 0 0 12px #55ff55, 0 0 5px black, 2px 2px 2px black;
+}
+
+.category {
+	display: inline-block;
+	width: 250px;
+	margin: 10px;
+	padding: 10px 0;
+	background-color: #7777ee;
+	border-radius: 10px;
+	box-shadow: 0 0 4px purple;
+	color: #eeeeee;
+	text-shadow: 0 0 2px black;
+}
+
+.category:hover {;
+	background-color: #444444;
+	color: #eeeeee;
+	cursor: pointer;
+}
+
+.questions {
+	font-size: 1.1em;
+	font-weight: bold;
+}
+
+#choices-list {
+	margin: 10px 30px 0 10px;
+}
+
+.choices {
+	font-size: 1.1em;
+	margin: 0px 50px;
+}
+
+.choice-bkg-div {
+	margin-left: -50px;
+	padding: 10px 0 10px 50px;
+}
+
+.choices:hover {
+	color: #eeeeee;
+	cursor: pointer;
+}
+
+.choice-bkg-div:hover {
+	background-color: #444444;
+}
+
+.choice-bkg-div:active {
+	background-color: #181818;
+}
